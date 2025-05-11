@@ -1,75 +1,229 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { BlurView } from 'expo-blur';
+import React from 'react';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { borderRadius, darkTheme, lightTheme, spacing, typography } from '../../constants/theme';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const featuredPlaces = [
+  {
+    id: '1',
+    name: 'The Hidden Cafe',
+    category: 'Cafe',
+    rating: 4.8,
+    image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500',
+    reward: 'Earn 5% back',
+  },
+  {
+    id: '2',
+    name: 'Mountain View Restaurant',
+    category: 'Restaurant',
+    rating: 4.6,
+    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500',
+    reward: 'Earn 4% back',
+  },
+  {
+    id: '3',
+    name: 'Sunset Beach Bar',
+    category: 'Bar',
+    rating: 4.9,
+    image: 'https://images.unsplash.com/photo-1572116469696-31de9f17c34c?w=500',
+    reward: 'Earn 6% back',
+  },
+];
+
+const quickActions = [
+  { id: 'explore', label: 'Explore', icon: '🧭', color: '#FF6B00' },
+  { id: 'claim', label: 'Claim Rewards', icon: '🎁', color: '#4CAF50' },
+  { id: 'create', label: 'Create List', icon: '📝', color: '#2196F3' },
+];
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === 'dark' ? darkTheme : lightTheme;
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: spacing.xxl }}>
+        {/* Welcome Card */}
+        <BlurView intensity={40} tint={colorScheme === 'dark' ? 'dark' : 'light'} style={styles.welcomeCard}>
+          <Text style={[styles.welcomeTitle, { color: theme.text }]}>Welcome back 👋</Text>
+          <Text style={[styles.welcomeSubtitle, { color: theme.secondary }]}>Ready to discover new places and earn Bitcoin rewards?</Text>
+        </BlurView>
+
+        {/* Quick Actions */}
+        <View style={styles.quickActionsRow}>
+          {quickActions.map((action) => (
+            <TouchableOpacity key={action.id} style={[styles.quickAction, { backgroundColor: action.color + '22' }]}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.quickActionIcon}>{action.icon}</Text>
+              <Text style={[styles.quickActionLabel, { color: theme.text }]}>{action.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Rewards Summary Glass Card */}
+        <BlurView intensity={40} tint={colorScheme === 'dark' ? 'dark' : 'light'} style={styles.glassCard}>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>Your Rewards</Text>
+          <Text style={[styles.rewardsAmount, { color: theme.primary }]}>2,500 <Text style={{ fontWeight: '400' }}>sats</Text></Text>
+          <Text style={[styles.rewardsUsd, { color: theme.secondary }]}>≈ $1.25 USD</Text>
+        </BlurView>
+
+        {/* Featured Places */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>Featured Places</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.featuredScroll}>
+            {featuredPlaces.map((place) => (
+              <BlurView key={place.id} intensity={30} tint={colorScheme === 'dark' ? 'dark' : 'light'} style={styles.featuredCard}>
+                <Image source={{ uri: place.image }} style={styles.featuredImage} />
+                <View style={styles.featuredContent}>
+                  <Text style={[styles.featuredName, { color: theme.text }]}>{place.name}</Text>
+                  <Text style={[styles.featuredCategory, { color: theme.secondary }]}>{place.category}</Text>
+                  <View style={styles.featuredFooter}>
+                    <Text style={[styles.featuredReward, { color: theme.primary }]}>{place.reward}</Text>
+                    <Text style={[styles.featuredRating, { color: theme.secondary }]}>⭐ {place.rating}</Text>
+                  </View>
+                </View>
+              </BlurView>
+            ))}
+          </ScrollView>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  welcomeCard: {
+    marginTop: spacing.xl,
+    marginHorizontal: spacing.xl,
+    marginBottom: spacing.lg,
+    borderRadius: borderRadius.xl,
+    padding: spacing.xl,
     alignItems: 'center',
-    gap: 8,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    elevation: 8,
+    overflow: 'hidden',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  welcomeTitle: {
+    ...typography.h1,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+    fontWeight: 'bold',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  welcomeSubtitle: {
+    ...typography.body,
+    textAlign: 'center',
+    opacity: 0.85,
   },
-});
+  quickActionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: spacing.xl,
+    marginBottom: spacing.xl,
+  },
+  quickAction: {
+    flex: 1,
+    marginHorizontal: spacing.sm,
+    borderRadius: borderRadius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 90,
+    height: 90,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  quickActionIcon: {
+    fontSize: 32,
+    marginBottom: spacing.sm,
+  },
+  quickActionLabel: {
+    ...typography.body,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  glassCard: {
+    borderRadius: borderRadius.xl,
+    padding: spacing.xl,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    elevation: 8,
+    overflow: 'hidden',
+    marginHorizontal: spacing.xl,
+    marginBottom: spacing.xl,
+  },
+  section: {
+    marginTop: 8,
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.xl,
+  },
+  sectionTitle: {
+    ...typography.h2,
+    marginBottom: spacing.md,
+    fontWeight: 'bold',
+  },
+  // Featured Places
+  featuredScroll: {
+    flexDirection: 'row',
+  },
+  featuredCard: {
+    width: 220,
+    marginRight: spacing.md,
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  featuredImage: {
+    width: '100%',
+    height: 120,
+  },
+  featuredContent: {
+    padding: spacing.md,
+  },
+  featuredName: {
+    ...typography.h3,
+    marginBottom: spacing.xs,
+    fontWeight: 'bold',
+  },
+  featuredCategory: {
+    ...typography.body,
+    marginBottom: spacing.sm,
+  },
+  featuredFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  featuredReward: {
+    ...typography.body,
+    fontWeight: 'bold',
+  },
+  featuredRating: {
+    ...typography.caption,
+    marginLeft: spacing.sm,
+  },
+  rewardsAmount: {
+    ...typography.h1,
+    marginBottom: spacing.xs,
+    fontWeight: 'bold',
+  },
+  rewardsUsd: {
+    ...typography.body,
+  },
+}); 
