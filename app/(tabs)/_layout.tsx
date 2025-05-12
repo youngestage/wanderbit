@@ -10,9 +10,9 @@ export default function TabLayout() {
 
   return (
     <View style={styles.container}>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
+    <Tabs
+      screenOptions={{
+        headerShown: false,
           tabBarActiveTintColor: theme.primary,
           tabBarInactiveTintColor: theme.secondary,
           tabBarStyle: {
@@ -53,19 +53,19 @@ export default function TabLayout() {
           },
         }}
       >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Home',
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="home" size={size} color={color} />
             ),
-          }}
-        />
-        <Tabs.Screen
-          name="explore"
-          options={{
-            title: 'Explore',
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: 'Explore',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="compass" size={size} color={color} />
             ),
@@ -87,9 +87,9 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="person" size={size} color={color} />
             ),
-          }}
-        />
-      </Tabs>
+        }}
+      />
+    </Tabs>
     </View>
   );
 }

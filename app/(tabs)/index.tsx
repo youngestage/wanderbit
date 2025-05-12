@@ -130,9 +130,7 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.sm,
     borderRadius: borderRadius.lg,
     alignItems: 'center',
-    justifyContent: 'center',
-    width: 90,
-    height: 90,
+    paddingVertical: spacing.lg,
     backgroundColor: 'rgba(255,255,255,0.12)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -147,7 +145,6 @@ const styles = StyleSheet.create({
   quickActionLabel: {
     ...typography.body,
     fontWeight: 'bold',
-    textAlign: 'center',
   },
   glassCard: {
     borderRadius: borderRadius.xl,
