@@ -1,52 +1,74 @@
-import { useTheme } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
-import React from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
-import { borderRadius, spacing } from '../constants/theme';
+import { Platform, StyleSheet, useColorScheme, View, ViewProps } from 'react-native';
+import { spacing } from '../constants/theme';
+import { useTheme } from './ThemeProvider';
 
-interface GlassCardProps {
-  children: React.ReactNode;
-  style?: ViewStyle;
+interface GlassCardProps extends ViewProps {
   intensity?: number;
+  children: React.ReactNode;
 }
 
-export const GlassCard: React.FC<GlassCardProps> = ({
-  children,
-  style,
-  intensity = 50,
-}) => {
-  const { colors } = useTheme();
+export function GlassCard({ intensity = 40, style, children, ...props }: GlassCardProps) {
+  const theme = useTheme();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
-  return (
-    <View style={[styles.container, style]}>
+  if (Platform.OS === 'ios') {
+    return (
       <BlurView
-        intensity={intensity}
-        tint="light"
-        style={[styles.blurContainer, { backgroundColor: colors.card }]}
+        intensity={isDark ? 30 : intensity}
+        tint={isDark ? 'dark' : 'light'}
+        style={[
+          styles.card,
+          {
+            borderColor: isDark ? theme.border : 'rgba(255, 255, 255, 0.1)',
+            backgroundColor: isDark ? 'rgba(30, 41, 59, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+            shadowColor: isDark ? '#000' : '#fff',
+            shadowOffset: {
+              width: isDark ? 0 : -2,
+              height: isDark ? 8 : -2,
+            },
+            shadowOpacity: isDark ? 0.25 : 0.15,
+            shadowRadius: isDark ? 16 : 12,
+          },
+          style,
+        ]}
+        {...props}
       >
         {children}
       </BlurView>
+    );
+  }
+
+  return (
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: isDark ? theme.card : theme.surface,
+          borderColor: isDark ? theme.border : theme.secondary + '20',
+          shadowColor: isDark ? '#000' : '#fff',
+          shadowOffset: {
+            width: isDark ? 0 : -2,
+            height: isDark ? 8 : -2,
+          },
+          shadowOpacity: isDark ? 0.25 : 0.15,
+          shadowRadius: isDark ? 16 : 12,
+          elevation: isDark ? 8 : 4,
+        },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: borderRadius.lg,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  blurContainer: {
+  card: {
+    borderRadius: 16,
     padding: spacing.md,
-    borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
 }); 

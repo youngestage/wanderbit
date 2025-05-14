@@ -1,36 +1,36 @@
+import { StyleSheet } from 'react-native';
+
 export const lightTheme = {
-  background: '#FFFFFF',
-  card: 'rgba(255, 255, 255, 0.8)',
-  text: '#1A1A1A',
-  secondary: '#666666',
-  primary: '#FF6B00',
-  border: 'rgba(0, 0, 0, 0.1)',
-  accent: '#353b41',
-  // Additional theme variables
-  shadow: 'rgba(0, 0, 0, 0.1)',
-  success: '#4CAF50',
-  error: '#f44336',
-  warning: '#ff9800',
-  info: '#2196F3',
+  text: '#22262a',
+  background: '#f9fafb',
+  primary: '#0a7ea4',
+  secondary: '#64748b',
+  accent: '#0284c7',
+  card: '#ffffff',
+  success: '#059669',
+  warning: '#d97706',
+  error: '#dc2626',
+  surface: '#ffffff',
+  surfaceHover: '#f1f5f9',
+  border: '#e2e8f0',
+  placeholder: '#94a3b8',
 };
 
 export const darkTheme = {
-  background: '#040506',
-  card: 'rgba(255, 255, 255, 0.05)',
-  text: '#FFFFFF',
-  secondary: '#A1A1A1',
-  primary: '#FF6B00',
-  border: 'rgba(255, 255, 255, 0.1)',
-  accent: '#bec4ca',
-  // Additional theme variables
-  shadow: 'rgba(0, 0, 0, 0.3)',
-  success: '#81C784',
-  error: '#E57373',
-  warning: '#FFB74D',
-  info: '#64B5F6',
+  text: '#f8fafc',
+  background: '#0f172a',
+  primary: '#38bdf8',
+  secondary: '#94a3b8',
+  accent: '#0ea5e9',
+  card: '#1e293b',
+  success: '#34d399',
+  warning: '#fbbf24',
+  error: '#f87171',
+  surface: '#1e293b',
+  surfaceHover: '#334155',
+  border: '#334155',
+  placeholder: '#64748b',
 };
-
-export type Theme = typeof lightTheme;
 
 export const spacing = {
   xs: 4,
@@ -41,38 +41,43 @@ export const spacing = {
   xxl: 48,
 };
 
-export const typography = {
+export const typography = StyleSheet.create({
   h1: {
-    fontFamily: 'Inter-Bold',
+    fontFamily: 'ClashDisplay-Bold',
     fontSize: 32,
     lineHeight: 40,
     letterSpacing: -0.5,
   },
   h2: {
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: 'ClashDisplay-Semibold',
     fontSize: 24,
     lineHeight: 32,
-    letterSpacing: -0.25,
+    letterSpacing: -0.3,
   },
   h3: {
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: 'ClashDisplay-Medium',
     fontSize: 20,
     lineHeight: 28,
-    letterSpacing: 0,
+    letterSpacing: -0.2,
   },
   body: {
-    fontFamily: 'Inter',
+    fontFamily: 'ClashDisplay',
     fontSize: 16,
     lineHeight: 24,
-    letterSpacing: 0.15,
   },
-  caption: {
-    fontFamily: 'Inter',
+  bodySmall: {
+    fontFamily: 'ClashDisplay',
     fontSize: 14,
     lineHeight: 20,
-    letterSpacing: 0.25,
   },
-};
+  caption: {
+    fontFamily: 'ClashDisplay',
+    fontSize: 12,
+    lineHeight: 16,
+  },
+});
+
+export type Theme = typeof lightTheme;
 
 export const borderRadius = {
   sm: 8,

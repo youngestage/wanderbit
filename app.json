@@ -4,12 +4,16 @@
     "slug": "wanderbit",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/logo.svg",
       "resizeMode": "contain",
-      "backgroundColor": "#040506"
+      "backgroundColor": "#f9fafb",
+      "dark": {
+        "backgroundColor": "#040506"
+      }
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,18 +24,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#040506"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#f9fafb"
       },
       "package": "com.wanderbit.app"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro",
+      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-font"
     ],
-    "scheme": "wanderbit",
     "fonts": [
       {
         "asset": "./assets/fonts/ClashDisplay-Regular.otf",

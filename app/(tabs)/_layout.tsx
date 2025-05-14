@@ -2,17 +2,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, View, useColorScheme } from 'react-native';
-import { darkTheme, lightTheme, spacing } from '../../constants/theme';
+import { useTheme } from '../../components/ThemeProvider';
+import { spacing } from '../../constants/theme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const theme = colorScheme === 'dark' ? darkTheme : lightTheme;
+  const theme = useTheme();
 
   return (
     <View style={styles.container}>
-    <Tabs
-      screenOptions={{
-        headerShown: false,
+      <Tabs
+        screenOptions={{
+          headerShown: false,
           tabBarActiveTintColor: theme.primary,
           tabBarInactiveTintColor: theme.secondary,
           tabBarStyle: {
@@ -23,10 +24,10 @@ export default function TabLayout() {
             borderRadius: 32,
             height: 64,
             paddingBottom: 0,
-            backgroundColor: Platform.OS === 'ios' ? 'transparent' : 'rgba(255,255,255,0.8)',
+            backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.background,
             borderTopWidth: 0,
             elevation: 0,
-            shadowColor: '#000',
+            shadowColor: theme.text,
             shadowOffset: {
               width: 0,
               height: 4,
@@ -47,25 +48,25 @@ export default function TabLayout() {
             paddingVertical: 8,
           },
           tabBarLabelStyle: {
-            fontFamily: 'Inter',
+            fontFamily: 'ClashDisplay',
             fontSize: 12,
             paddingBottom: 8,
           },
         }}
       >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Home',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="home" size={size} color={color} />
             ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
+          }}
+        />
+        <Tabs.Screen
+          name="explore"
+          options={{
+            title: 'Explore',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="compass" size={size} color={color} />
             ),
@@ -87,9 +88,9 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="person" size={size} color={color} />
             ),
-        }}
-      />
-    </Tabs>
+          }}
+        />
+      </Tabs>
     </View>
   );
 }

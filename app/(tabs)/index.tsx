@@ -1,226 +1,292 @@
+import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
-import { borderRadius, darkTheme, lightTheme, spacing, typography } from '../../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { GlassCard } from '../../components/GlassCard';
+import { useTheme } from '../../components/ThemeProvider';
+import { spacing, typography } from '../../constants/theme';
 
-const featuredPlaces = [
+interface FeaturedPlace {
+  id: string;
+  name: string;
+  type: string;
+  reward: string;
+  distance: string;
+  image: string;
+}
+
+interface QuickAction {
+  id: string;
+  title: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  color: string;
+}
+
+const FEATURED_PLACES: FeaturedPlace[] = [
   {
     id: '1',
-    name: 'The Hidden Cafe',
-    category: 'Cafe',
-    rating: 4.8,
-    image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500',
-    reward: 'Earn 5% back',
+    name: 'Crypto Cafe',
+    type: 'Coffee Shop',
+    reward: '1,500',
+    distance: '0.3',
+    image: '☕️',
   },
   {
     id: '2',
-    name: 'Mountain View Restaurant',
-    category: 'Restaurant',
-    rating: 4.6,
-    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500',
-    reward: 'Earn 4% back',
+    name: 'Bitcoin Beach',
+    type: 'Restaurant',
+    reward: '2,000',
+    distance: '1.2',
+    image: '🏖️',
   },
   {
     id: '3',
-    name: 'Sunset Beach Bar',
-    category: 'Bar',
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1572116469696-31de9f17c34c?w=500',
-    reward: 'Earn 6% back',
+    name: 'Satoshi\'s Sushi',
+    type: 'Japanese',
+    reward: '1,800',
+    distance: '0.8',
+    image: '🍱',
   },
 ];
 
-const quickActions = [
-  { id: 'explore', label: 'Explore', icon: '🧭', color: '#FF6B00' },
-  { id: 'claim', label: 'Claim Rewards', icon: '🎁', color: '#4CAF50' },
-  { id: 'create', label: 'Create List', icon: '📝', color: '#2196F3' },
+const QUICK_ACTIONS: QuickAction[] = [
+  {
+    id: '1',
+    title: 'Scan QR',
+    icon: 'qr-code',
+    color: '#FFE4E4',
+  },
+  {
+    id: '2',
+    title: 'Send Sats',
+    icon: 'flash',
+    color: '#E4FFEA',
+  },
+  {
+    id: '3',
+    title: 'Receive',
+    icon: 'wallet',
+    color: '#E4F1FF',
+  },
 ];
 
 export default function HomeScreen() {
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === 'dark' ? darkTheme : lightTheme;
+  const theme = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    content: {
+      padding: spacing.xl,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: spacing.xl,
+    },
+    notificationBadge: {
+      padding: spacing.sm,
+      position: 'relative',
+    },
+    notificationDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      position: 'absolute',
+      top: spacing.sm,
+      right: spacing.sm,
+    },
+    balanceCard: {
+      overflow: 'hidden',
+      marginBottom: spacing.xl,
+    },
+    balanceGradient: {
+      padding: spacing.lg,
+    },
+    balanceHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: spacing.sm,
+    },
+    refreshButton: {
+      padding: spacing.xs,
+    },
+    balanceAmount: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+    },
+    quickActions: {
+      flexDirection: 'row',
+      gap: spacing.md,
+      marginBottom: spacing.xl,
+    },
+    quickAction: {
+      flex: 1,
+      alignItems: 'center',
+      gap: spacing.xs,
+      padding: spacing.md,
+    },
+    iconContainer: {
+      padding: spacing.sm,
+      borderRadius: 12,
+    },
+    section: {
+      gap: spacing.md,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    placesList: {
+      gap: spacing.md,
+    },
+    placeCard: {
+      overflow: 'hidden',
+    },
+    placeGradient: {
+      padding: spacing.lg,
+      gap: spacing.md,
+    },
+    placeHeader: {
+      flexDirection: 'row',
+      gap: spacing.md,
+      alignItems: 'center',
+    },
+    placeEmoji: {
+      fontSize: 40,
+    },
+    placeInfo: {
+      flex: 1,
+      gap: spacing.xs,
+    },
+    placeDetails: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    rewardBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+      backgroundColor: theme.primary + '20',
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.xs,
+      borderRadius: 8,
+    },
+    distanceBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+      backgroundColor: theme.secondary + '20',
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.xs,
+      borderRadius: 8,
+    },
+  });
+
+  const renderQuickAction = ({ id, title, icon, color }: QuickAction) => (
+    <TouchableOpacity key={id} activeOpacity={0.8}>
+      <GlassCard style={[styles.quickAction, { backgroundColor: color }]}>
+        <View style={[styles.iconContainer, { backgroundColor: theme.background + '80' }]}>
+          <Ionicons name={icon} size={24} color={theme.primary} />
+        </View>
+        <Text style={[typography.caption, { color: theme.text }]}>{title}</Text>
+      </GlassCard>
+    </TouchableOpacity>
+  );
+
+  const renderFeaturedPlace = ({ id, name, type, reward, distance, image }: FeaturedPlace) => (
+    <TouchableOpacity key={id} activeOpacity={0.8}>
+      <GlassCard style={styles.placeCard}>
+        <LinearGradient
+          colors={[theme.background + '40', theme.background + '80']}
+          style={styles.placeGradient}
+        >
+          <View style={styles.placeHeader}>
+            <Text style={styles.placeEmoji}>{image}</Text>
+            <View style={styles.placeInfo}>
+              <Text style={[typography.h3, { color: theme.text }]}>{name}</Text>
+              <Text style={[typography.caption, { color: theme.secondary }]}>{type}</Text>
+            </View>
+          </View>
+          <View style={styles.placeDetails}>
+            <View style={styles.rewardBadge}>
+              <Ionicons name="flash" size={14} color={theme.primary} />
+              <Text style={[typography.caption, { color: theme.primary }]}>{reward} sats</Text>
+            </View>
+            <View style={styles.distanceBadge}>
+              <Ionicons name="location" size={14} color={theme.secondary} />
+              <Text style={[typography.caption, { color: theme.secondary }]}>{distance} km</Text>
+            </View>
+          </View>
+        </LinearGradient>
+      </GlassCard>
+    </TouchableOpacity>
+  );
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: spacing.xxl }}>
-        {/* Welcome Card */}
-        <BlurView intensity={40} tint={colorScheme === 'dark' ? 'dark' : 'light'} style={styles.welcomeCard}>
-          <Text style={[styles.welcomeTitle, { color: theme.text }]}>Welcome back 👋</Text>
-          <Text style={[styles.welcomeSubtitle, { color: theme.secondary }]}>Ready to discover new places and earn Bitcoin rewards?</Text>
-        </BlurView>
+    <ScrollView 
+      style={[styles.container, { backgroundColor: theme.background }]}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.content}
+    >
+      <View style={styles.header}>
+        <View>
+          <Text style={[typography.h1, { color: theme.text }]}>
+            Welcome back 👋
+          </Text>
+          <Text style={[typography.body, { color: theme.secondary }]}>
+            Ready to explore and stack sats?
+          </Text>
+        </View>
+        <TouchableOpacity>
+          <GlassCard style={styles.notificationBadge}>
+            <Ionicons name="notifications" size={24} color={theme.primary} />
+            <View style={[styles.notificationDot, { backgroundColor: theme.primary }]} />
+          </GlassCard>
+        </TouchableOpacity>
+      </View>
 
-        {/* Quick Actions */}
-        <View style={styles.quickActionsRow}>
-          {quickActions.map((action) => (
-            <TouchableOpacity key={action.id} style={[styles.quickAction, { backgroundColor: action.color + '22' }]}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.quickActionIcon}>{action.icon}</Text>
-              <Text style={[styles.quickActionLabel, { color: theme.text }]}>{action.label}</Text>
+      <GlassCard style={styles.balanceCard}>
+        <BlurView intensity={20} tint="light" style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[theme.primary + '20', theme.primary + '10']}
+          style={styles.balanceGradient}
+        >
+          <View style={styles.balanceHeader}>
+            <Text style={[typography.h3, { color: theme.text }]}>Your Balance</Text>
+            <TouchableOpacity style={styles.refreshButton}>
+              <Ionicons name="refresh" size={20} color={theme.primary} />
             </TouchableOpacity>
-          ))}
-        </View>
+          </View>
+          <View style={styles.balanceAmount}>
+            <Text style={[typography.h1, { color: theme.text }]}>21,000</Text>
+            <Text style={[typography.h2, { color: theme.secondary }]}> sats</Text>
+          </View>
+          <Text style={[typography.caption, { color: theme.secondary }]}>
+            ≈ $8.40 USD
+          </Text>
+        </LinearGradient>
+      </GlassCard>
 
-        {/* Rewards Summary Glass Card */}
-        <BlurView intensity={40} tint={colorScheme === 'dark' ? 'dark' : 'light'} style={styles.glassCard}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Your Rewards</Text>
-          <Text style={[styles.rewardsAmount, { color: theme.primary }]}>2,500 <Text style={{ fontWeight: '400' }}>sats</Text></Text>
-          <Text style={[styles.rewardsUsd, { color: theme.secondary }]}>≈ $1.25 USD</Text>
-        </BlurView>
+      <View style={styles.quickActions}>
+        {QUICK_ACTIONS.map(renderQuickAction)}
+      </View>
 
-        {/* Featured Places */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Featured Places</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.featuredScroll}>
-            {featuredPlaces.map((place) => (
-              <BlurView key={place.id} intensity={30} tint={colorScheme === 'dark' ? 'dark' : 'light'} style={styles.featuredCard}>
-                <Image source={{ uri: place.image }} style={styles.featuredImage} />
-                <View style={styles.featuredContent}>
-                  <Text style={[styles.featuredName, { color: theme.text }]}>{place.name}</Text>
-                  <Text style={[styles.featuredCategory, { color: theme.secondary }]}>{place.category}</Text>
-                  <View style={styles.featuredFooter}>
-                    <Text style={[styles.featuredReward, { color: theme.primary }]}>{place.reward}</Text>
-                    <Text style={[styles.featuredRating, { color: theme.secondary }]}>⭐ {place.rating}</Text>
-                  </View>
-                </View>
-              </BlurView>
-            ))}
-          </ScrollView>
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={[typography.h2, { color: theme.text }]}>Featured Places</Text>
+          <TouchableOpacity>
+            <Text style={[typography.body, { color: theme.primary }]}>See All</Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
-    </View>
+        <View style={styles.placesList}>
+          {FEATURED_PLACES.map(renderFeaturedPlace)}
+        </View>
+      </View>
+    </ScrollView>
   );
-}
-
-const styles = StyleSheet.create({
-  welcomeCard: {
-    marginTop: spacing.xl,
-    marginHorizontal: spacing.xl,
-    marginBottom: spacing.lg,
-    borderRadius: borderRadius.xl,
-    padding: spacing.xl,
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.18)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 24,
-    elevation: 8,
-    overflow: 'hidden',
-  },
-  welcomeTitle: {
-    ...typography.h1,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-    fontWeight: 'bold',
-  },
-  welcomeSubtitle: {
-    ...typography.body,
-    textAlign: 'center',
-    opacity: 0.85,
-  },
-  quickActionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: spacing.xl,
-    marginBottom: spacing.xl,
-  },
-  quickAction: {
-    flex: 1,
-    marginHorizontal: spacing.sm,
-    borderRadius: borderRadius.lg,
-    alignItems: 'center',
-    paddingVertical: spacing.lg,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  quickActionIcon: {
-    fontSize: 32,
-    marginBottom: spacing.sm,
-  },
-  quickActionLabel: {
-    ...typography.body,
-    fontWeight: 'bold',
-  },
-  glassCard: {
-    borderRadius: borderRadius.xl,
-    padding: spacing.xl,
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.18)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 24,
-    elevation: 8,
-    overflow: 'hidden',
-    marginHorizontal: spacing.xl,
-    marginBottom: spacing.xl,
-  },
-  section: {
-    marginTop: 8,
-    paddingHorizontal: spacing.xl,
-    marginBottom: spacing.xl,
-  },
-  sectionTitle: {
-    ...typography.h2,
-    marginBottom: spacing.md,
-    fontWeight: 'bold',
-  },
-  // Featured Places
-  featuredScroll: {
-    flexDirection: 'row',
-  },
-  featuredCard: {
-    width: 220,
-    marginRight: spacing.md,
-    borderRadius: borderRadius.lg,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(255,255,255,0.18)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  featuredImage: {
-    width: '100%',
-    height: 120,
-  },
-  featuredContent: {
-    padding: spacing.md,
-  },
-  featuredName: {
-    ...typography.h3,
-    marginBottom: spacing.xs,
-    fontWeight: 'bold',
-  },
-  featuredCategory: {
-    ...typography.body,
-    marginBottom: spacing.sm,
-  },
-  featuredFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  featuredReward: {
-    ...typography.body,
-    fontWeight: 'bold',
-  },
-  featuredRating: {
-    ...typography.caption,
-    marginLeft: spacing.sm,
-  },
-  rewardsAmount: {
-    ...typography.h1,
-    marginBottom: spacing.xs,
-    fontWeight: 'bold',
-  },
-  rewardsUsd: {
-    ...typography.body,
-  },
-}); 
+} 

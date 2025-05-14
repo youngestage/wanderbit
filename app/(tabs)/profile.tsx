@@ -1,146 +1,248 @@
+import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
-import { borderRadius, darkTheme, lightTheme, spacing, typography } from '../../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { GlassCard } from '../../components/GlassCard';
+import { useTheme } from '../../components/ThemeProvider';
+import { spacing, typography } from '../../constants/theme';
 
-const AVATAR = 'https://randomuser.me/api/portraits/men/32.jpg';
+interface ProfileOption {
+  id: string;
+  title: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  color: string;
+  action: () => void;
+}
 
 export default function ProfileScreen() {
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === 'dark' ? darkTheme : lightTheme;
+  const theme = useTheme();
+  const [hasProfileImage, setHasProfileImage] = useState(false);
 
-  // Mock auth state
-  const [user, setUser] = useState<null | { name: string; wallet: string }>(null);
-
-  const handleConnect = () => {
-    // Mock wallet connect
-    setUser({ name: 'Satoshi Nakamoto', wallet: 'bc1qxy...0p7x' });
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: () => {
+            // Add any cleanup logic here (e.g., clear tokens, reset state)
+            router.replace('/sign-in');
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
-  const handleSignOut = () => setUser(null);
+
+  const handleLinkWallet = () => {
+    // Implement wallet linking logic
+    console.log('Link wallet');
+  };
+
+  const handleUpdateProfile = () => {
+    // Implement profile update logic
+    console.log('Update profile');
+  };
+
+  const PROFILE_OPTIONS: ProfileOption[] = [
+    {
+      id: '1',
+      title: 'Link Lightning Wallet',
+      icon: 'flash',
+      color: '#FFE4E4',
+      action: handleLinkWallet,
+    },
+    {
+      id: '2',
+      title: 'Preferences',
+      icon: 'settings',
+      color: '#E4FFEA',
+      action: () => console.log('Preferences'),
+    },
+    {
+      id: '3',
+      title: 'Security',
+      icon: 'shield',
+      color: '#E4F1FF',
+      action: () => console.log('Security'),
+    },
+    {
+      id: '4',
+      title: 'Help & Support',
+      icon: 'help-circle',
+      color: '#F4E4FF',
+      action: () => console.log('Help'),
+    },
+  ];
+
+  const renderProfileOption = ({ id, title, icon, color, action }: ProfileOption) => (
+    <TouchableOpacity key={id} onPress={action} activeOpacity={0.8}>
+      <GlassCard style={styles.optionCard}>
+        <View style={[styles.iconContainer, { backgroundColor: color }]}>
+          <Ionicons name={icon} size={24} color={theme.primary} />
+        </View>
+        <View style={styles.optionContent}>
+          <Text style={[typography.body, { color: theme.text }]}>{title}</Text>
+          <Ionicons name="chevron-forward" size={20} color={theme.secondary} />
+        </View>
+      </GlassCard>
+    </TouchableOpacity>
+  );
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
-      {/* Hero Section with Glass Morphism */}
-      <View style={styles.heroContainer}>
-        <View style={styles.avatarWrapper}>
-          <Image source={{ uri: AVATAR }} style={styles.avatar} />
-        </View>
-        <BlurView intensity={40} tint={colorScheme === 'dark' ? 'dark' : 'light'} style={styles.heroGlass}>
-          <Text style={[styles.heroTitle, { color: theme.text }]}>Profile</Text>
-          {user ? (
-            <>
-              <Text style={[styles.name, { color: theme.text }]}>{user.name}</Text>
-              <Text style={[styles.wallet, { color: theme.secondary }]}>{user.wallet}</Text>
-              <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }]} onPress={handleSignOut}>
-                <Text style={[styles.buttonText, { color: theme.background }]}>Sign Out</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <Text style={[styles.subtitle, { color: theme.secondary }]}>Sign in to save your lists and earn rewards.</Text>
-              <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }]} onPress={handleConnect}>
-                <Text style={[styles.buttonText, { color: theme.background }]}>Connect Wallet</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </BlurView>
-      </View>
-      {/* Placeholder for future features */}
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.content}
+    >
+      <GlassCard style={styles.profileCard}>
+        <BlurView intensity={20} tint="light" style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[theme.primary + '20', theme.primary + '10']}
+          style={styles.profileGradient}
+        >
+          <TouchableOpacity onPress={handleUpdateProfile} style={styles.profileImageContainer}>
+            {hasProfileImage ? (
+              <Image
+                source={{ uri: 'https://placeholder.com/150' }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={[styles.emptyProfile, { backgroundColor: theme.primary + '20' }]}>
+                <Ionicons name="person" size={40} color={theme.primary} />
+              </View>
+            )}
+            <View style={[styles.editBadge, { backgroundColor: theme.primary }]}>
+              <Ionicons name="camera" size={14} color="white" />
+            </View>
+          </TouchableOpacity>
+          
+          <Text style={[typography.h2, { color: theme.text }]}>Anonymous Explorer</Text>
+          <Text style={[typography.caption, { color: theme.secondary }]}>
+            Complete your profile to earn more rewards
+          </Text>
+
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={[typography.h3, { color: theme.text }]}>12</Text>
+              <Text style={[typography.caption, { color: theme.secondary }]}>Places Visited</Text>
+            </View>
+            <View style={[styles.divider, { backgroundColor: theme.secondary + '20' }]} />
+            <View style={styles.statItem}>
+              <Text style={[typography.h3, { color: theme.text }]}>21,450</Text>
+              <Text style={[typography.caption, { color: theme.secondary }]}>Sats Earned</Text>
+            </View>
+          </View>
+        </LinearGradient>
+      </GlassCard>
+
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>My Lists</Text>
-        <Text style={[styles.sectionSubtitle, { color: theme.secondary }]}>Coming soon: Curated lists, reviews, and more.</Text>
+        <Text style={[typography.h3, { color: theme.text, marginBottom: spacing.md }]}>
+          Settings
+        </Text>
+        <View style={styles.optionsList}>
+          {PROFILE_OPTIONS.map(renderProfileOption)}
+        </View>
       </View>
-    </View>
+
+      <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+        <Text style={[typography.body, { color: theme.primary }]}>Log Out</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  heroContainer: {
-    height: 340,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    position: 'relative',
-    marginTop: spacing.xl,
+  container: {
+    flex: 1,
   },
-  avatarWrapper: {
-    position: 'absolute',
-    top: 4,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    zIndex: 2,
+  content: {
+    padding: spacing.xl,
   },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: borderRadius.round,
-    borderWidth: 4,
-    borderColor: 'rgba(255,255,255,0.7)',
-    backgroundColor: '#eee',
-  },
-  heroGlass: {
-    marginTop: 48,
-    marginHorizontal: spacing.xl,
-    paddingTop: 64,
-    paddingBottom: spacing.xl,
-    paddingHorizontal: spacing.xl,
-    borderRadius: borderRadius.xl,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 24,
-    elevation: 8,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+  profileCard: {
     overflow: 'hidden',
+    marginBottom: spacing.xl,
   },
-  heroTitle: {
-    ...typography.h1,
-    textAlign: 'center',
+  profileGradient: {
+    padding: spacing.xl,
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  profileImageContainer: {
+    position: 'relative',
     marginBottom: spacing.md,
-    fontWeight: 'bold',
   },
-  name: {
-    ...typography.h2,
-    marginBottom: spacing.sm,
-    fontWeight: 'bold',
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
-  wallet: {
-    ...typography.body,
-    marginBottom: spacing.lg,
+  emptyProfile: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  subtitle: {
-    ...typography.body,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
+  editBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  button: {
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.lg,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 4,
+  statsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: spacing.md,
+    paddingTop: spacing.md,
+    width: '100%',
   },
-  buttonText: {
-    ...typography.h2,
-    fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  divider: {
+    width: 1,
+    height: 40,
+    marginHorizontal: spacing.md,
   },
   section: {
-    marginTop: spacing.xl,
-    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.xl,
   },
-  sectionTitle: {
-    ...typography.h2,
-    marginBottom: spacing.sm,
-    fontWeight: 'bold',
+  optionsList: {
+    gap: spacing.md,
   },
-  sectionSubtitle: {
-    ...typography.body,
-    color: '#888',
+  optionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    gap: spacing.md,
+  },
+  iconContainer: {
+    padding: spacing.sm,
+    borderRadius: 12,
+  },
+  optionContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  logoutButton: {
+    alignItems: 'center',
+    paddingVertical: spacing.md,
   },
 }); 
